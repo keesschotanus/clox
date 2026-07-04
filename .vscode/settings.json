@@ -1,0 +1,10 @@
+{
+        "C_Cpp.default.compilerPath": "/usr/bin/gcc",
+        "sonarlint.pathToCompileCommands": "${workspaceFolder}/.vscode/compile_commands.json",
+        "cSpell.ignoreWords": [
+                "Wextra"
+        ],
+        "cSpell.words": [
+                "clox"
+        ],
+}

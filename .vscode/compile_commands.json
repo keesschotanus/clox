@@ -1,0 +1,20 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-std=c2x",
+      "-g",
+      "-O0",
+      "-Wall",
+      "-Wextra",
+      "-Iinclude",
+      "-c",
+      "-o",
+      "build/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/kees/projects/c/clox",
+    "file": "/home/kees/projects/c/new/src/main.c",
+    "output": "/home/kees/projects/c/new/build/main.o"
+  }
+]
