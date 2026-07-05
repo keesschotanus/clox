@@ -3,26 +3,46 @@
 #include <collections/list/list.h>
 
 #include "debug.h"
+#include "value.h"
 
-
-static int offset = 0;
-static void disassembleInstruction(const void * data)
+void disassembleChunk(Chunk *chunk, const char *name)
 {
-	printf("%04d ", offset++);
+	printf("== %s ==\n", name);
 
-  	uint8_t instruction = *(const uint8_t *)data;
-  	switch (instruction) {
-    	case OP_RETURN:
-		printf("%s\n", "OP_RETURN");
-		break;
-    	default:
-      		printf("Unknown opcode %d\n", instruction);
-      
+	for (int offset = 0; offset < list_size(chunk->opcodes);)
+	{
+		offset = disassembleInstruction(chunk, offset);
 	}
 }
 
-void disassembleChunk(list_t chunk, const char* name) {
-  printf("== %s ==\n", name);
+static int constantInstruction(const char *name, Chunk *chunk, int offset)
+{
+	uint8_t constant = *(const uint8_t *)list_get(chunk->opcodes, offset + 1);
+	printf("%-16s %4d '", name, constant);
+	printValue(*(const Value *)list_get(chunk->constants, constant));
+	printf("'\n");
+	return offset + 2;
+}
 
-  list_visit(chunk, &disassembleInstruction);
+static int simpleInstruction(const char *name, int offset)
+{
+	printf("%s\n", name);
+	return offset + 1;
+}
+
+int disassembleInstruction(Chunk *chunk, int offset)
+{
+	printf("%04d ", offset);
+
+	uint8_t instruction = *(const uint8_t *)list_get(chunk->opcodes, offset);
+	switch (instruction)
+	{
+	case OP_CONSTANT:
+		return constantInstruction("OP_CONSTANT", chunk, offset);
+	case OP_RETURN:
+		return simpleInstruction("OP_RETURN", offset);
+	default:
+		printf("Unknown opcode %d\n", instruction);
+		return offset + 1;
+	}
 }

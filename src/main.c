@@ -1,18 +1,26 @@
 #include <collections/list/list.h>
 #include <stdio.h>
 
-#include "common.h"
 #include "chunk.h"
+#include "common.h"
 #include "debug.h"
 
 int main(void)
 {
 	puts("Running clox...");
-	list_t chunks = list_create(100, sizeof(uint8_t));
-	int8_t byte = OP_RETURN;
-	list_append(chunks, &byte);
 
-	disassembleChunk(chunks, "test chunk");
-	list_free(chunks);
+	Chunk chunk;
+	initChunk(&chunk);
+
+	int constant = addConstant(&chunk, 1.2);
+	writeChunk(&chunk, OP_CONSTANT);
+	writeChunk(&chunk, (uint8_t)constant);
+
+	writeChunk(&chunk, OP_RETURN);
+
+	disassembleChunk(&chunk, "test chunk");
+
+	freeChunk(&chunk);
+
 	return 0;
 }
