@@ -13,10 +13,10 @@ int main(void)
 	initChunk(&chunk);
 
 	int constant = addConstant(&chunk, 1.2);
-	writeChunk(&chunk, OP_CONSTANT);
-	writeChunk(&chunk, (uint8_t)constant);
+	writeChunk(&chunk, OP_CONSTANT, 0);
+	writeChunk(&chunk, (uint8_t)constant, 0);
 
-	writeChunk(&chunk, OP_RETURN);
+	writeChunk(&chunk, OP_RETURN, 0);
 
 	disassembleChunk(&chunk, "test chunk");
 

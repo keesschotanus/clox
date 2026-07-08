@@ -9,7 +9,7 @@ void disassembleChunk(Chunk *chunk, const char *name)
 {
 	printf("== %s ==\n", name);
 
-	for (int offset = 0; offset < list_size(chunk->opcodes);)
+	for (int offset = 0; offset < (int)list_size(chunk->opcodes);)
 	{
 		offset = disassembleInstruction(chunk, offset);
 	}
@@ -33,6 +33,13 @@ static int simpleInstruction(const char *name, int offset)
 int disassembleInstruction(Chunk *chunk, int offset)
 {
 	printf("%04d ", offset);
+	int lineNumber = *(const int *)list_get(chunk->lines, offset);
+	int previousLineNumber = offset > 0 ? *(const int *)list_get(chunk->lines, offset - 1) : -1;
+	if (offset > 0 && lineNumber == previousLineNumber) {
+		printf("   | ");
+	} else {
+		printf("%4d ", lineNumber);
+	}
 
 	uint8_t instruction = *(const uint8_t *)list_get(chunk->opcodes, offset);
 	switch (instruction)
