@@ -5,7 +5,7 @@ BLD_DIR = build
 CC = gcc
 CFLAGS = -std=c2x -g -O0 -Wall -Wextra -I$(INC_DIR)
 
-objects = $(BLD_DIR)/main.o $(BLD_DIR)/chunk.o $(BLD_DIR)/debug.o $(BLD_DIR)/value.o
+objects = $(BLD_DIR)/main.o $(BLD_DIR)/chunk.o $(BLD_DIR)/debug.o $(BLD_DIR)/value.o $(BLD_DIR)/vm.o
 
 # Include collections library
 SYSTEM_COLL_PREFIX ?= /usr/local
@@ -29,6 +29,9 @@ $(BLD_DIR)/debug.o: $(SRC_DIR)/debug.c $(INC_DIR)/debug.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BLD_DIR)/value.o: $(SRC_DIR)/value.c $(INC_DIR)/value.h
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BLD_DIR)/vm.o: $(SRC_DIR)/vm.c $(INC_DIR)/vm.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BLD_DIR):
