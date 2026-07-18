@@ -6,6 +6,10 @@
 #include "scanner.h"
 #include "chunk.h"
 
+#ifdef DEBUG_PRINT_CODE
+#include "debug.h"
+#endif
+
 typedef struct {
 	Token current;
 	Token previous;
@@ -117,6 +121,12 @@ static void emitConstant(Value value) {
 
 static void endCompiler() {
 	emitReturn();
+
+#ifdef DEBUG_PRINT_CODE
+	if (!parser.hadError) {
+		disassembleChunk(currentChunk(), "code");
+	}
+#endif
 }
 
 static void expression();
@@ -124,6 +134,10 @@ static ParseRule* getRule(TokenType type);
 static void parsePrecedence(Precedence precedence);
 
 static void binary() {
+#ifdef DEBUG_TRACE_EXECUTION
+	puts("binary()");
+#endif
+
 	TokenType operatorType = parser.previous.type;
 	const ParseRule* rule = getRule(operatorType);
 	parsePrecedence((Precedence)(rule->precedence + 1));
@@ -138,16 +152,26 @@ static void binary() {
 }
 
 static void grouping() {
+#ifdef DEBUG_TRACE_EXECUTION
+	puts("grouping()");
+#endif
 	expression();
 	consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
 }
 
 static void number() {
+#ifdef DEBUG_TRACE_EXECUTION
+	puts("number()");
+#endif
 	double value = strtod(parser.previous.start, NULL);
 	emitConstant(value);
 }
 
 static void unary() {
+#ifdef DEBUG_TRACE_EXECUTION
+	puts("unary()");
+#endif
+
 	TokenType operatorType = parser.previous.type;
 
 	// Compile the operand.
@@ -204,6 +228,10 @@ ParseRule rules[] = {
 };
 
 static void parsePrecedence(Precedence precedence) {
+#ifdef DEBUG_TRACE_EXECUTION
+	printf("parsePrecedence(%d)\n", precedence);
+#endif
+
 	advance();
 	ParseFn prefixRule = getRule(parser.previous.type)->prefix;
 	if (prefixRule == NULL) {
@@ -221,10 +249,18 @@ static void parsePrecedence(Precedence precedence) {
 }
 
 static ParseRule* getRule(TokenType type) {
+#ifdef DEBUG_TRACE_EXECUTION
+	printf("getRule(%d)\n", type);
+#endif
+
 	return &rules[type];
 }
 
 static void expression() {
+#ifdef DEBUG_TRACE_EXECUTION
+	puts("expression");
+#endif
+
 	parsePrecedence(PREC_ASSIGNMENT);
 }
 
