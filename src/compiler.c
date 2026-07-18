@@ -35,7 +35,7 @@ static Chunk* currentChunk() {
 	return compilingChunk;
 }
 
-static void errorAt(Token* token, const char* message) {
+static void errorAt(const Token* token, const char* message) {
 	if (parser.panicMode) return;
 	parser.panicMode = true;
 	fprintf(stderr, "[line %d] Error", token->line);
@@ -109,6 +109,20 @@ static void emitConstant(Value value) {
 
 static void endCompiler() {
 	emitReturn();
+}
+
+static void binary() {
+	TokenType operatorType = parser.previous.type;
+	ParseRule* rule = getRule(operatorType);
+	parsePrecedence((Precedence)(rule->precedence + 1));
+
+	switch (operatorType) {
+	case TOKEN_PLUS:	emitByte(OP_ADD); break;
+	case TOKEN_MINUS:	emitByte(OP_SUBTRACT); break;
+	case TOKEN_STAR:	emitByte(OP_MULTIPLY); break;
+	case TOKEN_SLASH:	emitByte(OP_DIVIDE); break;
+	default: 		return; // Unreachable.
+	}
 }
 
 static void grouping() {
